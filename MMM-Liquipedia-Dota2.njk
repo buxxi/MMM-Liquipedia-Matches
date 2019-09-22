@@ -1,0 +1,15 @@
+<table class="xsmall">
+{% for match in matches %}
+<tr class="small">
+	<td>
+		<span class="bright">{{ match.team1 }}</span>
+		<span> vs </span> 
+		<span class="bright">{{ match.team2 }}</span>
+	</td>
+	<td class="align-right {{" bright" if match.starts == "live" else ""}}">{{ match.starts }}</td>
+</tr>
+<tr>
+	<td colspan="3" class="align-left">{{ match.tournament }}</td>
+</tr>
+{% endfor %}
+</table>
