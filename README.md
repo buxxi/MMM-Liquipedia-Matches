@@ -3,7 +3,8 @@
 
 ## Install
 1. Clone repository into ``../modules/`` inside your MagicMirror folder.
-2. Add the module to the Magic Mirror config.
+2. Run ``npm install`` inside the ``MMM-Liquipedia-Dota2`` folder.
+3. Add the module to the Magic Mirror config.
 ```
 {
   module: "MMM-Liquipedia-Dota2",
@@ -12,7 +13,7 @@
   config: {}
 },
 ```
-3. Done!
+4. Done!
 
 ## Configuration parameters
 - ``matchUpdateInterval`` : How often it should fetch new matches in seconds, anything lower than 30 minutes is throttled since it could lead to an ip-ban, default is 60 minutes.
