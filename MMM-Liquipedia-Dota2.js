@@ -2,6 +2,7 @@ Module.register("MMM-Liquipedia-Dota2",{
 	defaults: {
 		matchUpdateInterval : 60*60*1000, //Once every hour should be a good enough default
 		displayCount : 5,
+		requiredProfiles: 0,
 		sourceUrl : "https://liquipedia.net/dota2/api.php?action=parse&format=json&page=Liquipedia:Upcoming_and_ongoing_matches"
 	},
 
@@ -37,7 +38,7 @@ Module.register("MMM-Liquipedia-Dota2",{
 			return { matches : [] };
 		}
 		return {
-			matches : self.matches.matches.slice(0, self.config.displayCount).map(function(match) {
+			matches : self.matches.matches.filter(self.profileFilter(self.config.requiredProfiles)).slice(0, self.config.displayCount).map(function(match) {
 				return {
 					team1 : match.team1,
 					team2 : match.team2,
@@ -73,4 +74,11 @@ Module.register("MMM-Liquipedia-Dota2",{
 			return Math.floor(diff / 60) + " h";
 		}
 	},
+
+	profileFilter : function(requiredProfiles) {
+		return function(match) {
+			var profiles = (match.team1.hasProfile ? 1 : 0) + (match.team2.hasProfile ? 1 : 0);
+			return profiles >= requiredProfiles && match.team1.name && match.team2.name;
+		};
+	}
 });

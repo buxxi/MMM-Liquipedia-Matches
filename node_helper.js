@@ -2,6 +2,7 @@ const NodeHelper = require("node_helper");
 const request = require("request");
 const jsdom = require("jsdom").JSDOM;
 const moment = require("moment");
+const tls = require('tls');
 
 const RATE_LIMIT_MILLISECONDS = 30000;
 
@@ -38,7 +39,7 @@ module.exports = NodeHelper.create({
 			gzip : true,
 			headers : {
 				"User-Agent" : "MagicMirror/MMM-Liquipedia-Dota2/1.0; (https://github.com/buxxi/MMM-Liquipedia-Dota2)"
-			}
+			},
 		}, function(error, response, body) {
 			if (!error && response.statusCode == 200) {
 				self.sendSocketNotification("DOTA2_MATCHES", {
@@ -46,7 +47,11 @@ module.exports = NodeHelper.create({
 					data: self.parseMatches(JSON.parse(response.body).parse.text['*'])
 				});
 			} else {
-				self.sendSocketNotification("DOTA2_MATCHES_ERROR", { statusCode : response.statusCode, url : url });
+				if (response) {
+					self.sendSocketNotification("DOTA2_MATCHES_ERROR", { statusCode : response.statusCode, url : url });
+				} else {
+					self.sendSocketNotification("DOTA2_MATCHES_ERROR", { statusCode : error.toString(), url : url });
+				}
 			}
 		});    
 	},
@@ -56,6 +61,9 @@ module.exports = NodeHelper.create({
 		var tables = dom.window.document.querySelectorAll("table");
 	
 		function teamName(div) {
+			if (!div) {
+				return undefined;
+			}
 			var teamName = div.innerText;
 			var a = div.querySelector("a");
 			if (!a) {
@@ -66,6 +74,10 @@ module.exports = NodeHelper.create({
 	
 			return teamName;
 		}
+
+		function hasProfile(div) {
+			return !div.querySelector("a.new");
+		}
 	
 		var result = [];
 	
@@ -75,8 +87,14 @@ module.exports = NodeHelper.create({
 			var tournament = table.querySelector(".match-countdown~div a").title;
 
 			result.push({
-				team1 : teamName(teams[0]),
-				team2 : teamName(teams[1]),
+				team1 : {
+					name: teamName(teams[0]),
+					hasProfile: hasProfile(teams[0])
+				},
+				team2 : {
+					name: teamName(teams[1]),
+					hasProfile: hasProfile(teams[1])
+				},
 				date : date.toISOString(),
 				tournament : tournament
 			});
