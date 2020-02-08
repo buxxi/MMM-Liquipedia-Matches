@@ -1,0 +1,7 @@
+{
+    "LIVE" : "live",
+    "CONFIG_ERROR_TITLE" : "Configuration error",
+    "CONFIG_ERROR_MESSAGE" : "This module needs the clock module to used since it listens for the CLOCK_MINUTE notification",
+    "REQUEST_ERROR_TITLE" : "Request error",
+    "REQUEST_ERROR_MESSAGE" : "Got HTTP {statusCode} while requesting {url}"
+}

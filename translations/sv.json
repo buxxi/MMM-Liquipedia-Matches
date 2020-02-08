@@ -1,0 +1,7 @@
+{
+    "LIVE" : "live",
+    "CONFIG_ERROR_TITLE" : "Konfigurationsfel",
+    "CONFIG_ERROR_MESSAGE" : "Den här modulen behöver clock-modulen för att kunna lyssna efter CLOCK_MINUTE notifikationen",
+    "REQUEST_ERROR_TITLE" : "Anropsfel",
+    "REQUEST_ERROR_MESSAGE" : "Fick felkod HTTP {statusCode} när {url} anropades"
+}

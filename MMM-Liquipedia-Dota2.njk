@@ -6,7 +6,11 @@
 		<span> vs </span>
 		<span class="bright">{{ match.team2.name }}</span>
 	</td>
-	<td class="align-right {{" bright" if match.starts == "live" else ""}}">{{ match.starts }}</td>
+    {% if match.live %}
+		<td class="align-right bright">{{ "LIVE" | translate }}</td>
+	{% else %}
+		<td class="align-right">{{ match.starts }}</td>
+	{% endif %}
 </tr>
 <tr>
 	<td colspan="3" class="align-left">{{ match.tournament }}</td>

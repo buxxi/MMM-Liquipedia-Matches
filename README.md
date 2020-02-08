@@ -20,7 +20,8 @@
 ## Configuration parameters
 - ``matchUpdateInterval`` : How often it should fetch new matches in seconds, anything lower than 30 minutes is throttled since it could lead to an ip-ban, default is 60 minutes.
 - ``displayCount`` : the amount of matches to display, default is 5
-- ``sourceUrl``: The API-url to use, could possibly be changed to other games on Liquipedia too?
+- ``sourceUrl`` : The API-url to use, could possibly be changed to other games on Liquipedia too?
 - ``requiredProfiles``: the amount of teams in the match that needs to have a profile page on Liquipedia, 0-2, default is 0
+- ``language`` : The language to use for time formatting, defaults to MagicMirror default
 
  [screenshot]: https://github.com/buxxi/MMM-Liquipedia-Dota2/blob/master/screenshot.png
