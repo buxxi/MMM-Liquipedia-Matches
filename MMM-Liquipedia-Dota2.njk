@@ -3,7 +3,9 @@
 <tr class="small">
 	<td>
 		<span class="bright">{{ match.team1.name }}</span>
+		<img src="{{ logoPath }}{{ match.team1.logo}}" onerror="this.classList.add('error')"/>
 		<span> vs </span>
+		<img src="{{ logoPath }}{{ match.team2.logo}}" onerror="this.classList.add('error')"/>
 		<span class="bright">{{ match.team2.name }}</span>
 	</td>
     {% if match.live %}

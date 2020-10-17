@@ -38,6 +38,10 @@ Module.register("MMM-Liquipedia-Dota2",{
 		return ["moment.js"];
 	},
 
+	getStyles: function() {
+		return ["MMM-Liquipedia-Dota2.css"];
+	},
+
 	getTranslations: function() {
 		return {
 				sv: "translations/sv.json",
@@ -60,7 +64,9 @@ Module.register("MMM-Liquipedia-Dota2",{
 					starts : self.timeRemaining(matchDate),
 					live : new Date().getTime() > matchDate.getTime()
 				}
-			})
+			}),
+
+			logoPath: '/modules/' + this.name + '/public/logos/'
 		}
 	},
 

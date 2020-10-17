@@ -1,0 +1,10 @@
+.MMM-Liquipedia-Dota2 img {
+    height: 1em;
+    width: 1.5em;
+    vertical-align: middle;
+    object-fit: cover;
+}
+
+.MMM-Liquipedia-Dota2 img.error {
+    display : none;
+}

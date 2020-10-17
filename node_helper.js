@@ -78,22 +78,29 @@ module.exports = NodeHelper.create({
 		function hasProfile(div) {
 			return !div.querySelector("a.new");
 		}
+
+		function logoFileName(img) {
+			return /^.*\/(.*?)$/.exec(img.src)[1];
+		}
 	
 		var result = [];
 	
 		for (table of tables) {
 			var teams = table.querySelectorAll(".team-template-text");
+			var logos = table.querySelectorAll(".team-template-image img");
 			var date = moment.utc(table.querySelector(".match-countdown").textContent, "MMMM DD, YYYY - HH:mm [UTC]");
 			var tournament = table.querySelector(".match-countdown~div a").title;
 
 			result.push({
 				team1 : {
 					name: teamName(teams[0]),
-					hasProfile: hasProfile(teams[0])
+					hasProfile: hasProfile(teams[0]),
+					logo: logoFileName(logos[0]) 
 				},
 				team2 : {
 					name: teamName(teams[1]),
-					hasProfile: hasProfile(teams[1])
+					hasProfile: hasProfile(teams[1]),
+					logo: logoFileName(logos[1])
 				},
 				date : date.toISOString(),
 				tournament : tournament
