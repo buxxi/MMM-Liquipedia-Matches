@@ -30,6 +30,6 @@ By default no team logos will be displayed since they need to be fetched manuall
 To make a logo visible:
 1. Create a directory named ``public/logos`` in the root of this plugin
 2. Get/Create a logo that is preferably a square or is wider than its height in png format
-3. Place it in the ``public/logos`` directory and name it ``teeamsuperawesome5.png`` if the teams name is ``Team: SuperAwesome5`` (removing all non alphanumeric characters and making it lower case)
+3. Place it in the ``public/logos`` directory and name it ``teamsuperawesome5.png`` if the teams name is ``Team: SuperAwesome5`` (removing all non alphanumeric characters and making it lower case)
 
  [screenshot]: https://github.com/buxxi/MMM-Liquipedia-Dota2/blob/master/screenshot.png
