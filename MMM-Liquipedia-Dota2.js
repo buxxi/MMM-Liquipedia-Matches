@@ -4,7 +4,8 @@ Module.register("MMM-Liquipedia-Dota2",{
 		displayCount : 5,
 		requiredProfiles: 0,
 		language: config.language,
-		sourceUrl : "https://liquipedia.net/dota2/api.php?action=parse&format=json&page=Liquipedia:Upcoming_and_ongoing_matches"
+		sourceUrl : "https://liquipedia.net/dota2/api.php?action=parse&format=json&page=Liquipedia:Upcoming_and_ongoing_matches",
+		requiredTeams: []
 	},
 
 	start: function() {
@@ -55,7 +56,7 @@ Module.register("MMM-Liquipedia-Dota2",{
 			return { matches : [] };
 		}
 		return {
-			matches : self.matches.matches.filter(self.profileFilter(self.config.requiredProfiles)).slice(0, self.config.displayCount).map(function(match) {
+			matches : self.matches.matches.filter(self.matchFilter(config)).slice(0, self.config.displayCount).map(function(match) {
 				let matchDate = new Date(match.date);
 				return {
 					team1 : match.team1,
@@ -93,10 +94,33 @@ Module.register("MMM-Liquipedia-Dota2",{
 		return momentDate.fromNow();
 	},
 
+	matchFilter : function() {
+		let self = this;
+		if (self.config.requiredTeams.length > 0) {
+			return self.teamsFilter(self.config.requiredTeams.map(team => self.normalize(team)));
+		} else {
+			return self.profileFilter(self.config.requiredProfiles);
+		}
+	},
+
+	teamsFilter : function(requiredTeams) {
+		let self = this;
+		return function(match) {
+			return requiredTeams.indexOf(self.normalize(match.team1.name)) != -1 || requiredTeams.indexOf(self.normalize(match.team2.name)) != -1;
+		};
+	},
+
 	profileFilter : function(requiredProfiles) {
 		return function(match) {
 			var profiles = (match.team1.hasProfile ? 1 : 0) + (match.team2.hasProfile ? 1 : 0);
 			return profiles >= requiredProfiles && match.team1.name && match.team2.name;
 		};
+	},
+
+	normalize : function(name) {
+		if (!name) {
+			return "";
+		}
+		return name.toLowerCase().replace(/[^a-z0-9]/, "");
 	}
 });
