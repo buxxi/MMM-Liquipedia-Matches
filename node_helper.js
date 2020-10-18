@@ -1,8 +1,7 @@
 const NodeHelper = require("node_helper");
-const request = require("request");
+const fetch = require("node-fetch");
 const jsdom = require("jsdom").JSDOM;
 const moment = require("moment");
-const tls = require('tls');
 
 const RATE_LIMIT_MILLISECONDS = 30000;
 
@@ -33,27 +32,25 @@ module.exports = NodeHelper.create({
 		}
 		self.lastRequest = new Date().getTime();
 
-		request({
-			url : url,
+		return fetch(url, {
 			method : "GET",
-			gzip : true,
 			headers : {
 				"User-Agent" : "MagicMirror/MMM-Liquipedia-Dota2/1.0; (https://github.com/buxxi/MMM-Liquipedia-Dota2)"
-			},
-		}, function(error, response, body) {
-			if (!error && response.statusCode == 200) {
-				self.sendSocketNotification("DOTA2_MATCHES", {
-					url: url,
-					data: self.parseMatches(JSON.parse(response.body).parse.text['*'])
-				});
-			} else {
-				if (response) {
-					self.sendSocketNotification("DOTA2_MATCHES_ERROR", { statusCode : response.statusCode, url : url });
-				} else {
-					self.sendSocketNotification("DOTA2_MATCHES_ERROR", { statusCode : error.toString(), url : url });
-				}
 			}
-		});    
+		}).then(response => {
+			if (response.status != 200) {
+				throw new Error(response.status + ": " + response.statusText);
+			}
+			return response.json();
+		}).then(data => {
+			self.sendSocketNotification("DOTA2_MATCHES", {
+				url: url,
+				data: self.parseMatches(data.parse.text['*'])
+			});
+		}).catch(err => {
+			console.log(err);
+			self.sendSocketNotification("DOTA2_MATCHES_ERROR", { statusCode : err.message, url : url });	
+		});
 	},
 
 	parseMatches: function(data) {
@@ -76,6 +73,9 @@ module.exports = NodeHelper.create({
 		}
 
 		function hasProfile(div) {
+			if (!div) {
+				return false;
+			}
 			return !div.querySelector("a.new");
 		}
 
@@ -91,7 +91,6 @@ module.exports = NodeHelper.create({
 	
 		for (table of tables) {
 			var teams = table.querySelectorAll(".team-template-text");
-			var logos = table.querySelectorAll(".team-template-image img");
 			var date = moment.utc(table.querySelector(".match-countdown").textContent, "MMMM DD, YYYY - HH:mm [UTC]");
 			var tournament = table.querySelector(".match-countdown~div a").title;
 
