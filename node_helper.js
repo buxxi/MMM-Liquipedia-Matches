@@ -79,8 +79,12 @@ module.exports = NodeHelper.create({
 			return !div.querySelector("a.new");
 		}
 
-		function logoFileName(img) {
-			return /^.*\/(.*?)$/.exec(img.src)[1];
+		function logoFileName(div) {
+			let name = teamName(div);
+			if (!name) {
+				return undefined;
+			}
+			return name.toLowerCase().replace(/[^a-z0-9]/, "") + ".png";
 		}
 	
 		var result = [];
@@ -95,12 +99,12 @@ module.exports = NodeHelper.create({
 				team1 : {
 					name: teamName(teams[0]),
 					hasProfile: hasProfile(teams[0]),
-					logo: logoFileName(logos[0]) 
+					logo: logoFileName(teams[0])
 				},
 				team2 : {
 					name: teamName(teams[1]),
 					hasProfile: hasProfile(teams[1]),
-					logo: logoFileName(logos[1])
+					logo: logoFileName(teams[1])
 				},
 				date : date.toISOString(),
 				tournament : tournament
