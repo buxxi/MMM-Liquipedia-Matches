@@ -1,10 +1,10 @@
-.MMM-Liquipedia-Dota2 img {
+.MMM-Liquipedia-Dota2 .logo {
     height: 1em;
-    width: 1.5em;
+    max-width: 1.5em;
     vertical-align: middle;
     object-fit: cover;
 }
 
-.MMM-Liquipedia-Dota2 img.error {
+.MMM-Liquipedia-Dota2 .logo.error {
     display : none;
 }
