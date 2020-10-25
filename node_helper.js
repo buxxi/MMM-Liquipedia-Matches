@@ -55,7 +55,7 @@ module.exports = NodeHelper.create({
 
 	parseMatches: function(data) {
 		var dom = new jsdom(data);
-		var tables = dom.window.document.querySelectorAll("table");
+		var tables = dom.window.document.querySelectorAll("div[data-toggle-area-content='1'] table");
 	
 		function teamName(div) {
 			if (!div) {
