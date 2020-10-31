@@ -84,7 +84,7 @@ module.exports = NodeHelper.create({
 			if (!name) {
 				return undefined;
 			}
-			return name.toLowerCase().replace(/[^a-z0-9]/, "") + ".png";
+			return name.toLowerCase().replace(/[^a-z0-9]/g, "") + ".png";
 		}
 	
 		var result = [];

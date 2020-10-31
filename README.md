@@ -32,4 +32,9 @@ To make a logo visible:
 2. Get/Create a logo that is preferably a square or is wider than its height in png format
 3. Place it in the ``public/logos`` directory and name it ``teamsuperawesome5.png`` if the teams name is ``Team: SuperAwesome5`` (removing all non alphanumeric characters and making it lower case)
 
+I also created a script for making a one time download from Liquipedia, cropping and inverting dark logos:
+Run the following commands inside the `MMM-Liquipedia-Dota2`: 
+- `npm install`
+- `node fetch_logos.js`.
+
  [screenshot]: https://github.com/buxxi/MMM-Liquipedia-Dota2/blob/master/screenshot.png
