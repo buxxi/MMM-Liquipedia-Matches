@@ -48,7 +48,7 @@ function fetchImage(url, filename) {
 
 function parseTeams(data, baseImageUrl) {
     let dom = new jsdom(data.parse.text['*']);
-    let spans = dom.window.document.querySelectorAll(".team-template-image");
+    let spans = dom.window.document.querySelectorAll(".team-template-image-legacy");
     let result = [];
 
     for (span of spans) {
