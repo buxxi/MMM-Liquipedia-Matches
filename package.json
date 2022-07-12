@@ -3,9 +3,9 @@
     "version": "1.0.0",
     "description": "A module for Magic Mirror that displays live and upcoming Dota2 matches fetched from Liquipedia",
     "dependencies": {
-      "moment" : "^2.24.0",
-      "jsdom": "^15.1.1",
-      "node-fetch": "^2.6.1"
+      "moment" : "^2.29.4",
+      "jsdom": "^20.0.0",
+      "node-fetch": "^2.6.7"
     },
     "optionalDependencies": {
       "jimp" : "^0.16.1"
