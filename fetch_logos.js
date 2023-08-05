@@ -22,8 +22,12 @@ function fetchData(url) {
 
 function fetchImages(data) {
     let fetching = [];
+    let dirname = path.resolve(__dirname, "public", "logos");
+
+    fs.mkdirSync(dirname, { recursive : true });
+
     for (team of data) {
-        let filename = path.resolve(__dirname, "public", "logos", team.filename);
+        let filename = path.resolve(dirname, team.filename);
         if (!fs.existsSync(filename)) {
             fetching.push(fetchImage(team.url, filename));
         }
