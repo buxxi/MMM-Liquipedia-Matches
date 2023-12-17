@@ -91,7 +91,8 @@ module.exports = NodeHelper.create({
 	
 		for (table of tables) {
 			var teams = table.querySelectorAll(".team-template-text");
-			var date = moment.utc(table.querySelector(".match-countdown").textContent, "MMMM DD, YYYY - HH:mm [UTC]");
+			var date = moment.unix(table.querySelector(".match-countdown .timer-object").dataset.timestamp);
+			console.log(date);
 			var tournament = table.querySelector(".match-countdown~div a").title;
 
 			result.push({
