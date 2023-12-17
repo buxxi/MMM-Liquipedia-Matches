@@ -2,6 +2,7 @@
     "name": "mmm-liquipedia-dota2",
     "version": "1.0.0",
     "description": "A module for Magic Mirror that displays live and upcoming Dota2 matches fetched from Liquipedia",
+    "license": "MIT",
     "dependencies": {
       "moment" : "^2.29.4",
       "jsdom": "^22.1.0",
