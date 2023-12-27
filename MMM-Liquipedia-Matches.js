@@ -1,4 +1,4 @@
-Module.register("MMM-Liquipedia-Dota2",{
+Module.register("MMM-Liquipedia-Matches",{
 	defaults: {
 		matchUpdateInterval : 60*60*1000, //Once every hour should be a good enough default
 		displayCount : 5,
@@ -33,7 +33,7 @@ Module.register("MMM-Liquipedia-Dota2",{
 	},
 
 	getTemplate: function () {
-		return "MMM-Liquipedia-Dota2.njk";
+		return "MMM-Liquipedia-Matches.njk";
 	},
 
 	getScripts: function() {
@@ -41,7 +41,7 @@ Module.register("MMM-Liquipedia-Dota2",{
 	},
 
 	getStyles: function() {
-		return ["MMM-Liquipedia-Dota2.css"];
+		return ["MMM-Liquipedia-Matches.css"];
 	},
 
 	getTranslations: function() {
