@@ -4,6 +4,10 @@ const jsdom = require("jsdom").JSDOM;
 const moment = require("moment");
 
 const RATE_LIMIT_MILLISECONDS = 30000;
+const QUERY_PAGES_URL = "https://liquipedia.net/${game}/api.php?action=query&prop=links|info&titles=${titles}&format=json";
+const MATCHES_PAGE_URL = "https://liquipedia.net/${game}/api.php?action=parse&format=json&page=${title}"
+const USER_AGENT = "MagicMirror/MMM-Liquipedia-Dota2/1.0; (https://github.com/buxxi/MMM-Liquipedia-Dota2)";
+const POSSIBLE_TITLES = ["Liquipedia:Upcoming_and_ongoing_matches", "Liquipedia:Matches"];
 
 module.exports = NodeHelper.create({
 	start: function() {
@@ -15,8 +19,8 @@ module.exports = NodeHelper.create({
 		var self = this;
 
 		if (notification === "LOAD_LIQUIPEDIA_MATCHES") {
-			let url = payload.sourceUrl;
 			let game = payload.game;
+			let url = await self.resolveSourceUrl(payload.sourceUrl, game);	
 
 			try {
 				let matches = await self.loadMatches(url, game);
@@ -29,6 +33,30 @@ module.exports = NodeHelper.create({
 				self.sendSocketNotification("LIQUIPEDIA_MATCHES_ERROR", { statusCode : err.message, url : url, game: game });	
 			};
 		}
+	},
+
+	resolveSourceUrl: async function(sourceUrl, game) {
+		let self = this;
+
+		if (!!sourceUrl) {
+			return sourceUrl;
+		}
+
+		let url = QUERY_PAGES_URL.replace("${game}", game).replace("${titles}", POSSIBLE_TITLES.join("|"));
+
+		let response = await fetch(url, {
+			method : "GET",
+			headers : {
+				"User-Agent" : USER_AGENT
+			}
+		});
+		
+		if (response.status != 200) {
+			throw new Error(response.status + ": " + response.statusText);
+		}
+
+		let data = await response.json();
+		return self.parseSourceUrl(Object.values(data.query.pages), game);
 	},
 
 	loadMatches: async function(url, game) {
@@ -45,7 +73,7 @@ module.exports = NodeHelper.create({
 		let response = await fetch(url, {
 			method : "GET",
 			headers : {
-				"User-Agent" : "MagicMirror/MMM-Liquipedia-Dota2/1.0; (https://github.com/buxxi/MMM-Liquipedia-Dota2)"
+				"User-Agent" : USER_AGENT
 			}
 		});
 		
@@ -62,9 +90,30 @@ module.exports = NodeHelper.create({
 		return new Promise(resolve => setTimeout(resolve, ms));
 	},
 
+	parseSourceUrl: function(pages, game) {
+		console.log(pages);
+		let linksToOtherPage = (page) => {
+			let pageTitles = pages.map(page => page.title);
+			let linkTitles = page.links ? page.links.map(link => link.title) : [];
+			return pageTitles.some(page => linkTitles.includes(page));
+		}
+
+		let filteredPages = pages
+			.filter(page => !!page.pageid) //Page must exist
+			.filter(page => !linksToOtherPage(page)) //If page links to the other page it's deprecated
+		
+		if (filteredPages.length !== 1) {
+			console.log("Could not find a unique source page, got: " + filteredPages.length + ", using the latest touched one");
+		}
+		
+		let page = filteredPages.reduce((prev, current) => (prev && prev.touched > current.touched) ? prev : current);
+
+		return MATCHES_PAGE_URL.replace("${game}", game).replace("${title}", page.title);
+	},
+
 	parseMatches: function(data) {
 		var dom = new jsdom(data);
-		var tables = dom.window.document.querySelectorAll("div[data-toggle-area-content='1'] table");
+		var tables = dom.window.document.querySelectorAll(".infobox_matches_content");
 	
 		function teamName(div) {
 			if (!div) {
@@ -99,10 +148,14 @@ module.exports = NodeHelper.create({
 		var result = [];
 	
 		for (table of tables) {
-			var teams = table.querySelectorAll(".team-template-text");
-			var date = moment.unix(table.querySelector(".match-countdown .timer-object").dataset.timestamp);
+			let hasResult = !!table.querySelector("tr[class^='recent-matches-']");
+			if (hasResult) {
+				continue;
+			}
+			let teams = table.querySelectorAll(".team-template-text");
+			let date = moment.unix(table.querySelector(".match-countdown .timer-object").dataset.timestamp);
 		
-			var tournament = table.querySelector(".match-countdown~div a").title;
+			let tournament = table.querySelector(".match-countdown~div,.match-filler a").title;
 
 			result.push({
 				team1 : {
