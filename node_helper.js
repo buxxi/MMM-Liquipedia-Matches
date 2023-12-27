@@ -13,6 +13,7 @@ module.exports = NodeHelper.create({
 	start: function() {
 		console.log("Starting node helper for: " + this.name);
 		this.lastRequest = 0;
+		this.cachedSourceUrls = {};
 	},
 
 	socketNotificationReceived: async function(notification, payload) {
@@ -38,6 +39,10 @@ module.exports = NodeHelper.create({
 	resolveSourceUrl: async function(sourceUrl, game) {
 		let self = this;
 
+		if (game in self.cachedSourceUrls) {
+			return self.cachedSourceUrls[game];
+		}
+
 		if (!!sourceUrl) {
 			return sourceUrl;
 		}
@@ -56,7 +61,9 @@ module.exports = NodeHelper.create({
 		}
 
 		let data = await response.json();
-		return self.parseSourceUrl(Object.values(data.query.pages), game);
+		sourceUrl = self.parseSourceUrl(Object.values(data.query.pages), game);
+		self.cachedSourceUrls[game] = sourceUrl;
+		return sourceUrl;
 	},
 
 	loadMatches: async function(url, game) {
@@ -91,7 +98,6 @@ module.exports = NodeHelper.create({
 	},
 
 	parseSourceUrl: function(pages, game) {
-		console.log(pages);
 		let linksToOtherPage = (page) => {
 			let pageTitles = pages.map(page => page.title);
 			let linkTitles = page.links ? page.links.map(link => link.title) : [];
