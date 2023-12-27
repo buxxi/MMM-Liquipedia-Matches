@@ -68,7 +68,7 @@ Module.register("MMM-Liquipedia-Dota2",{
 				}
 			}),
 
-			logoPath: '/modules/' + this.name + '/public/logos/'
+			logoPath: '/modules/' + this.name + '/public/logos/' + self.config.game + '/'
 		}
 	},
 
