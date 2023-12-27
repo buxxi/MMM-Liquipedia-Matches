@@ -161,7 +161,7 @@ module.exports = NodeHelper.create({
 			let teams = table.querySelectorAll(".team-template-text");
 			let date = moment.unix(table.querySelector(".match-countdown .timer-object").dataset.timestamp);
 		
-			let tournament = table.querySelector(".match-countdown~div,.match-filler a").title;
+			let tournament = table.querySelector(".league-icon-small-image a").title;
 
 			result.push({
 				team1 : {
