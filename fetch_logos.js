@@ -4,7 +4,7 @@ const path = require("path");
 const fetch = require("node-fetch");
 const jsdom = require("jsdom").JSDOM;
 
-const USER_AGENT = "MagicMirror/MMM-Liquipedia-Dota2/1.0; (https://github.com/buxxi/MMM-Liquipedia-Dota2)";
+const USER_AGENT = "MagicMirror/MMM-Liquipedia-Matches/1.0; (https://github.com/buxxi/MMM-Liquipedia-Matches)";
 const IMAGE_BASE_URL = "https://liquipedia.net";
 const TEAMS_URL = "https://liquipedia.net/${game}/api.php?action=parse&format=json&page=Portal:Teams"
 

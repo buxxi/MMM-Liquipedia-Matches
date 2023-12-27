@@ -6,7 +6,7 @@ const moment = require("moment");
 const RATE_LIMIT_MILLISECONDS = 30000;
 const QUERY_PAGES_URL = "https://liquipedia.net/${game}/api.php?action=query&prop=links|info&titles=${titles}&format=json";
 const MATCHES_PAGE_URL = "https://liquipedia.net/${game}/api.php?action=parse&format=json&page=${title}"
-const USER_AGENT = "MagicMirror/MMM-Liquipedia-Dota2/1.0; (https://github.com/buxxi/MMM-Liquipedia-Dota2)";
+const USER_AGENT = "MagicMirror/MMM-Liquipedia-Matches/1.0; (https://github.com/buxxi/MMM-Liquipedia-Matches)";
 const POSSIBLE_TITLES = ["Liquipedia:Upcoming_and_ongoing_matches", "Liquipedia:Matches"];
 
 module.exports = NodeHelper.create({

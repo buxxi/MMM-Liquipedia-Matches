@@ -36,4 +36,4 @@ Run the following commands inside the `MMM-Liquipedia-Matches`:
 - `npm install`
 - `node fetch_logos.js dota2`.
 
- [screenshot]: https://github.com/buxxi/MMM-Liquipedia-Dota2/blob/master/screenshot.png
+ [screenshot]: https://github.com/buxxi/MMM-Liquipedia-Matches/blob/master/screenshot.png
