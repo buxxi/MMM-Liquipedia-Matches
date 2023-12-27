@@ -14,12 +14,12 @@ module.exports = NodeHelper.create({
 	socketNotificationReceived: function(notification, payload) {
 		var self = this;
 
-		if (notification === "LOAD_MATCHES") {
-			self.loadMatches(payload.sourceUrl);
+		if (notification === "LOAD_LIQUIPEDIA_MATCHES") {
+			self.loadMatches(payload.sourceUrl, payload.game);
 		}
 	},
 
-	loadMatches: function(url) {
+	loadMatches: function(url, game) {
 		var self = this;
 
 		var diff = (new Date().getTime() - self.lastRequest);
@@ -43,13 +43,13 @@ module.exports = NodeHelper.create({
 			}
 			return response.json();
 		}).then(data => {
-			self.sendSocketNotification("DOTA2_MATCHES", {
-				url: url,
+			self.sendSocketNotification("LIQUIPEDIA_MATCHES", {
+				game: game,
 				data: self.parseMatches(data.parse.text['*'])
 			});
 		}).catch(err => {
 			console.log(err);
-			self.sendSocketNotification("DOTA2_MATCHES_ERROR", { statusCode : err.message, url : url });	
+			self.sendSocketNotification("LIQUIPEDIA_MATCHES_ERROR", { statusCode : err.message, url : url, game: game });	
 		});
 	},
 
@@ -92,7 +92,7 @@ module.exports = NodeHelper.create({
 		for (table of tables) {
 			var teams = table.querySelectorAll(".team-template-text");
 			var date = moment.unix(table.querySelector(".match-countdown .timer-object").dataset.timestamp);
-			console.log(date);
+		
 			var tournament = table.querySelector(".match-countdown~div a").title;
 
 			result.push({

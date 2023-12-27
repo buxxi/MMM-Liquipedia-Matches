@@ -4,6 +4,7 @@ Module.register("MMM-Liquipedia-Dota2",{
 		displayCount : 5,
 		requiredProfiles: 0,
 		language: config.language,
+		game: "dota2",
 		sourceUrl : "https://liquipedia.net/dota2/api.php?action=parse&format=json&page=Liquipedia:Upcoming_and_ongoing_matches",
 		requiredTeams: []
 	},
@@ -12,10 +13,10 @@ Module.register("MMM-Liquipedia-Dota2",{
 		var self = this;
 		moment.locale(self.config.language);
 
-		self.sendSocketNotification("LOAD_MATCHES", self.config);
+		self.sendSocketNotification("LOAD_LIQUIPEDIA_MATCHES", self.config);
 
 		setInterval(function() {
-			self.sendSocketNotification("LOAD_MATCHES", self.config);
+			self.sendSocketNotification("LOAD_LIQUIPEDIA_MATCHES", self.config);
 		}, self.config.matchUpdateInterval);
 	},
 
@@ -72,10 +73,10 @@ Module.register("MMM-Liquipedia-Dota2",{
 	},
 
 	socketNotificationReceived: function (notification, payload) {
-		if (notification == "DOTA2_MATCHES" && payload.url == this.config.sourceUrl) {
+		if (notification == "LIQUIPEDIA_MATCHES" && payload.game == this.config.game) {
 			this.matches = { matches : payload.data };
 			this.updateDom();
-		} else if (notification == "DOTA2_MATCHES_ERROR" && payload.url == this.config.sourceUrl) {
+		} else if (notification == "LIQUIPEDIA_MATCHES_ERROR" && payload.game == this.config.game) {
 			this.sendNotification("SHOW_ALERT", { 
 				type : "notification",
 				title : this.name + ": " + this.translate("REQUEST_ERROR_TITLE"),
