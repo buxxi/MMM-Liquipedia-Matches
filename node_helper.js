@@ -11,46 +11,55 @@ module.exports = NodeHelper.create({
 		this.lastRequest = 0;
 	},
 
-	socketNotificationReceived: function(notification, payload) {
+	socketNotificationReceived: async function(notification, payload) {
 		var self = this;
 
 		if (notification === "LOAD_LIQUIPEDIA_MATCHES") {
-			self.loadMatches(payload.sourceUrl, payload.game);
+			let url = payload.sourceUrl;
+			let game = payload.game;
+
+			try {
+				let matches = await self.loadMatches(url, game);
+				self.sendSocketNotification("LIQUIPEDIA_MATCHES", {
+					game: game,
+					data: matches
+				});
+			} catch (err) {
+				console.log(err);
+				self.sendSocketNotification("LIQUIPEDIA_MATCHES_ERROR", { statusCode : err.message, url : url, game: game });	
+			};
 		}
 	},
 
-	loadMatches: function(url, game) {
+	loadMatches: async function(url, game) {
 		var self = this;
 
 		var diff = (new Date().getTime() - self.lastRequest);
 		if (diff < RATE_LIMIT_MILLISECONDS) {
 			console.log("Rate limiting check reached, waiting additional " + (RATE_LIMIT_MILLISECONDS - diff) + " ms before making a new request");
-			setTimeout(function() {
-				self.loadMatches(url);
-			}, (RATE_LIMIT_MILLISECONDS - diff));
-			return;
+			await self.wait(RATE_LIMIT_MILLISECONDS - diff);
+			return await self.loadMatches(url, game);
 		}
 		self.lastRequest = new Date().getTime();
 
-		return fetch(url, {
+		let response = await fetch(url, {
 			method : "GET",
 			headers : {
 				"User-Agent" : "MagicMirror/MMM-Liquipedia-Dota2/1.0; (https://github.com/buxxi/MMM-Liquipedia-Dota2)"
 			}
-		}).then(response => {
-			if (response.status != 200) {
-				throw new Error(response.status + ": " + response.statusText);
-			}
-			return response.json();
-		}).then(data => {
-			self.sendSocketNotification("LIQUIPEDIA_MATCHES", {
-				game: game,
-				data: self.parseMatches(data.parse.text['*'])
-			});
-		}).catch(err => {
-			console.log(err);
-			self.sendSocketNotification("LIQUIPEDIA_MATCHES_ERROR", { statusCode : err.message, url : url, game: game });	
 		});
+		
+		if (response.status != 200) {
+			throw new Error(response.status + ": " + response.statusText);
+		}
+
+		let data = await response.json();
+
+		return self.parseMatches(data.parse.text['*']);
+	},
+
+	wait: function (ms) {
+		return new Promise(resolve => setTimeout(resolve, ms));
 	},
 
 	parseMatches: function(data) {
