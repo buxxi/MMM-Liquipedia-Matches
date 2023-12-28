@@ -3,10 +3,13 @@
     "version": "1.0.0",
     "description": "A module for Magic Mirror that displays live and upcoming e-sport matches fetched from Liquipedia",
     "license": "MIT",
+    "repository": {    
+      "type": "git",
+      "url": "https://github.com/buxxi/MMM-Liquipedia-Matches.git"
+    },
     "dependencies": {
       "moment" : "^2.29.4",
-      "jsdom": "^22.1.0",
-      "node-fetch": "^2.6.12"
+      "jsdom": "^23.0.1"
     },
     "optionalDependencies": {
       "jimp": "^0.22.10"

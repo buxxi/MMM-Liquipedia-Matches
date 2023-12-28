@@ -1,7 +1,8 @@
 const fs = require("fs/promises");
+const { Readable } = require('stream');
+const { finished } = require('stream/promises');
 const jimp = require("jimp");
 const path = require("path");
-const fetch = require("node-fetch");
 const jsdom = require("jsdom").JSDOM;
 
 const USER_AGENT = "MagicMirror/MMM-Liquipedia-Matches/1.0; (https://github.com/buxxi/MMM-Liquipedia-Matches)";
@@ -41,20 +42,13 @@ async function fetchImages(data, game) {
     return filenames;
 }
 
-function fetchImage(url, filename) {
-    return new Promise(async (resolve, reject) => {
-        console.log("Downloading " + url);
-        let res = await fetch(url);
-        let fileStream = (await fs.open(filename, 'w')).createWriteStream();
-        res.body.pipe(fileStream);
+async function fetchImage(url, filename) {
+    console.log("Downloading " + url);
+    let res = await fetch(url);
+    let fileStream = (await fs.open(filename, 'w')).createWriteStream();
+    let body = Readable.fromWeb(res.body);
 
-        res.body.on("error", (err) => {
-            reject(err);
-        });
-        fileStream.on("finish", function() {
-            resolve(filename);
-        });
-    });
+    await finished(body.pipe(fileStream));
 }
 
 async function parseTeams(data) {
