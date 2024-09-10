@@ -118,7 +118,7 @@ module.exports = NodeHelper.create({
 
 	parseMatches: function(data) {
 		var dom = new jsdom(data);
-		var tables = dom.window.document.querySelectorAll(".infobox_matches_content");
+		var tables = dom.window.document.querySelectorAll(".match");
 	
 		function teamName(div) {
 			if (!div) {
@@ -153,7 +153,7 @@ module.exports = NodeHelper.create({
 		var result = [];
 	
 		for (table of tables) {
-			let hasResult = !!table.querySelector("tr[class^='recent-matches-']");
+			let hasResult = !!table.querySelector(".versus-upper b");
 			if (hasResult) {
 				continue;
 			}
