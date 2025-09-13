@@ -20,7 +20,7 @@ module.exports = NodeHelper.create({
 
 		if (notification === "LOAD_LIQUIPEDIA_MATCHES") {
 			let game = payload.game;
-			let url = await self.resolveSourceUrl(payload.sourceUrl, game);	
+			let url = await self.resolveSourceUrl(payload.sourceUrl, game);
 
 			try {
 				let matches = await self.loadMatches(url, game);
@@ -30,7 +30,7 @@ module.exports = NodeHelper.create({
 				});
 			} catch (err) {
 				console.log(err);
-				self.sendSocketNotification("LIQUIPEDIA_MATCHES_ERROR", { statusCode : err.message, url : url, game: game });	
+				self.sendSocketNotification("LIQUIPEDIA_MATCHES_ERROR", { statusCode : err.message, url : url, game: game });
 			};
 		}
 	},
@@ -54,7 +54,7 @@ module.exports = NodeHelper.create({
 				"User-Agent" : USER_AGENT
 			}
 		});
-		
+
 		if (response.status != 200) {
 			throw new Error(response.status + ": " + response.statusText);
 		}
@@ -82,7 +82,7 @@ module.exports = NodeHelper.create({
 				"User-Agent" : USER_AGENT
 			}
 		});
-		
+
 		if (response.status != 200) {
 			throw new Error(response.status + ": " + response.statusText);
 		}
@@ -106,11 +106,11 @@ module.exports = NodeHelper.create({
 		let filteredPages = pages
 			.filter(page => !!page.pageid) //Page must exist
 			.filter(page => !linksToOtherPage(page)) //If page links to the other page it's deprecated
-		
+
 		if (filteredPages.length !== 1) {
 			console.log("Could not find a unique source page, got: " + filteredPages.length + ", using the latest touched one");
 		}
-		
+
 		let page = filteredPages.reduce((prev, current) => (prev && prev.touched > current.touched) ? prev : current);
 
 		return MATCHES_PAGE_URL.replace("${game}", game).replace("${title}", page.title);
@@ -118,8 +118,8 @@ module.exports = NodeHelper.create({
 
 	parseMatches: function(data) {
 		var dom = new jsdom(data);
-		var tables = dom.window.document.querySelectorAll(".match");
-	
+		var tables = dom.window.document.querySelectorAll(".match-info");
+
 		function teamName(div) {
 			if (!div) {
 				return undefined;
@@ -131,8 +131,13 @@ module.exports = NodeHelper.create({
 			}
 			teamName = a.title;
 			teamName = teamName.replace(' (page does not exist)','');
-	
+
 			return teamName;
+		}
+
+
+		function tournamentName(a) {
+			return a.title.match('([^#]+)#?(.*)')[1].replaceAll("/", " ");
 		}
 
 		function hasProfile(div) {
@@ -149,18 +154,18 @@ module.exports = NodeHelper.create({
 			}
 			return name.toLowerCase().replace(/[^a-z0-9]/g, "") + ".png";
 		}
-	
+
 		var result = [];
-	
+
 		for (table of tables) {
-			let hasResult = !!table.querySelector(".versus-upper b");
+			let hasResult = !!table.querySelector(".match-info-header-winner");
 			if (hasResult) {
 				continue;
 			}
-			let teams = table.querySelectorAll(".team-template-text");
-			let date = moment.unix(table.querySelector(".match-countdown .timer-object").dataset.timestamp);
-		
-			let tournament = table.querySelector(".league-icon-small-image a").title;
+			let teams = table.querySelectorAll(".match-info-header-opponent .name");
+			let date = moment.unix(table.querySelector(".match-info-countdown .timer-object").dataset.timestamp);
+
+			let tournament = tournamentName(table.querySelector(".match-info-tournament a"));
 
 			result.push({
 				team1 : {
